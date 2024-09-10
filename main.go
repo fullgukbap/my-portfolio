@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"log"
 	"os"
 	"time"
@@ -18,14 +19,14 @@ var config *Config
 func init() {
 	c, err := NewConfig("./configs/.toml")
 	if err != nil {
-		log.Panicf("failed to open config: %v", err)
+		log.Panicf("failed to open config: %v\n", err)
 	}
 
 	config = c
 
 	pdfData, err := os.ReadFile(c.File.PortfolioPath)
 	if err != nil {
-		log.Panicf("failed to read file: %v", err)
+		log.Panicf("failed to read file: %v\n", err)
 	}
 
 	pdfBytes = pdfData
@@ -71,7 +72,22 @@ func main() {
 		return c.Send(pdfBytes)
 	})
 
-	if err := app.Listen(config.Http.Port); err != nil {
-		log.Fatal(err)
+	// Create tls certificate
+	cer, err := tls.LoadX509KeyPair(config.Ssl.CertPath, config.Ssl.KeyPath)
+	if err != nil {
+		log.Panicf("failed to load X509 Key: %v\n", err)
+	}
+
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{cer},
+	}
+
+	ln, err := tls.Listen("tcp", config.Http.Port, tlsConfig)
+	if err != nil {
+		log.Panicf("failed to tls listen: %v\n", err)
+	}
+
+	if err := app.Listener(ln); err != nil {
+		log.Panicf("failed to listen: %v\n", err)
 	}
 }

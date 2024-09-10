@@ -11,6 +11,11 @@ type Config struct {
 		Key string
 	}
 
+	Ssl struct {
+		CertPath string
+		KeyPath  string
+	}
+
 	Http struct {
 		Port string
 	}
