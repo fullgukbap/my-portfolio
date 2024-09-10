@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"log"
 	"os"
 	"time"
@@ -72,22 +71,7 @@ func main() {
 		return c.Send(pdfBytes)
 	})
 
-	// Create tls certificate
-	cer, err := tls.LoadX509KeyPair(config.Ssl.CertPath, config.Ssl.KeyPath)
-	if err != nil {
-		log.Panicf("failed to load X509 Key: %v\n", err)
-	}
-
-	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{cer},
-	}
-
-	ln, err := tls.Listen("tcp", config.Http.Port, tlsConfig)
-	if err != nil {
-		log.Panicf("failed to tls listen: %v\n", err)
-	}
-
-	if err := app.Listener(ln); err != nil {
+	if err := app.ListenTLS(config.Http.Port, config.Ssl.CertPath, config.Ssl.KeyPath); err != nil {
 		log.Panicf("failed to listen: %v\n", err)
 	}
 }
