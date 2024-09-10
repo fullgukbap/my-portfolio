@@ -10,13 +10,18 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-const secretKey = "6327080c49cef882ecf3b8273a960e05688843a0a16a242822c960eb4e2a5a3955e4079073e5327e9f073cd93505605b0a5d9e3bfc3d19c0695a43597041003a"
-const filePath = "./files/portfolio.pdf"
-
 var pdfBytes []byte
+var config *Config
 
 func init() {
-	pdfData, err := os.ReadFile(filePath)
+	c, err := NewConfig("./configs/.toml")
+	if err != nil {
+		log.Panicf("failed to open config: %v", err)
+	}
+
+	config = c
+
+	pdfData, err := os.ReadFile(c.File.PortfolioPath)
 	if err != nil {
 		log.Panicf("failed to read file: %v", err)
 	}
@@ -25,6 +30,7 @@ func init() {
 }
 
 func main() {
+
 	// Fiber 앱 생성
 	app := fiber.New(fiber.Config{})
 
@@ -41,7 +47,7 @@ func main() {
 	app.All("/*", func(c *fiber.Ctx) error {
 
 		key := c.Query("key", "")
-		if key == "" || key != secretKey {
+		if key == "" || key != config.Auth.Key {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
 
@@ -54,7 +60,7 @@ func main() {
 		return c.Send(pdfBytes)
 	})
 
-	if err := app.Listen(":8080"); err != nil {
+	if err := app.Listen(config.Http.Port); err != nil {
 		log.Fatal(err)
 	}
 }

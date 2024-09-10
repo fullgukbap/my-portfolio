@@ -10,9 +10,17 @@ type Config struct {
 	Auth struct {
 		Key string
 	}
+
+	Http struct {
+		Port string
+	}
+
+	File struct {
+		PortfolioPath string
+	}
 }
 
-func New(path string) (*Config, error) {
+func NewConfig(path string) (*Config, error) {
 	config := new(Config)
 
 	file, err := os.Open(path)
