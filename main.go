@@ -52,7 +52,7 @@ func main() {
 		Next: func(c *fiber.Ctx) bool {
 			return c.Query("noCache") == "true"
 		},
-		Expiration:   12 * time.Hour, // 12 h
+		Expiration:   15 * time.Minute, // 15 m
 		CacheControl: true,
 	}))
 
@@ -60,11 +60,6 @@ func main() {
 	// Etga, Limiter
 
 	app.All("/*", func(c *fiber.Ctx) error {
-		key := c.Query("key", "")
-		if key == "" || key != config.Auth.Key {
-			return c.SendStatus(fiber.StatusUnauthorized)
-		}
-
 		c.Set("Content-Type", "application/pdf")
 		c.Set("Content-Disposition", "inline; filename=한준범 포토폴리오.pdf")
 
