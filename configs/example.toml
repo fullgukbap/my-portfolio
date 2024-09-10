@@ -3,11 +3,11 @@ key = "4cf544bae87d3a2f2391ac401903911ea55686f9527eef479a89be21c9b334ee73cd727f8
 
 
 [http]
-port = ":433"
+port = ":443"
 
 [file]
 portfolioPath = "./files/portfolio.pdf"
 
 [ssl]
-certPath = "/etc/letsencrypt/live/domain.com/domain.pem"
-keyPath = "/etc/letsencrypt/live/domain.com/cert.pem"
+certPath = "/etc/letsencrypt/live/domain.com/fullchain.pem"
+keyPath = "/etc/letsencrypt/live/domain.com/privkey.pem"
