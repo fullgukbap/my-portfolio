@@ -36,6 +36,7 @@ func main() {
 	// Fiber 앱 생성
 	app := fiber.New(fiber.Config{
 		GETOnly: true,
+		Prefork: true,
 	})
 
 	app.Use(recover.New())
