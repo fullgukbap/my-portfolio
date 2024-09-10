@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -60,7 +59,6 @@ func main() {
 	// Etga, Limiter
 
 	app.All("/*", func(c *fiber.Ctx) error {
-		fmt.Println("hi")
 		key := c.Query("key", "")
 		if key == "" || key != config.Auth.Key {
 			return c.SendStatus(fiber.StatusUnauthorized)
